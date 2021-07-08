@@ -1,0 +1,17 @@
+{
+    "name": "Amazon Price Drop Notifier",
+    "version": "1.0",
+    "description": "-",
+    "manifest_version": 2,
+    "permissions": [
+        "declarativeContent",
+        "http://localhost:8080/products"
+    ],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_popup": "popup.html"
+    }
+}
