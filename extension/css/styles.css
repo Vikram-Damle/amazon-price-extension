@@ -1,0 +1,8 @@
+body {
+    width: 500px;
+    min-height: 100px;
+}
+
+#home-wrapper {
+    font-size: 1rem;
+}

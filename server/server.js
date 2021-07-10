@@ -27,7 +27,7 @@ app.post('/products', cors(), (request, response) => {
         // console.log(body)
         console.log(JSON.parse(body))
     })
-    // response.setHeader('Access-Control-Allow-Origin', '*')
+    
     response.end('Hello post request at /products\n')
 })
 
