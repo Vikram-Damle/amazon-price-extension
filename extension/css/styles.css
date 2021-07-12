@@ -3,6 +3,50 @@ body {
     min-height: 100px;
 }
 
+/* Home  */
 #home-wrapper {
     font-size: 1rem;
+}
+
+/* Login */
+#login-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+#login-form-wrapper {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#login-form-wrapper label{
+    height: auto;
+}
+
+#login-form-wrapper input{
+    margin: 0 0 10px;
+    width: 200px;
+}
+
+/* Signup */
+#signup-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#signup-form-wrapper {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#signup-form-wrapper label{
+    height: auto;
+}
+
+#signup-form-wrapper input{
+    margin: 0 0 10px;
+    width: 200px;
 }
