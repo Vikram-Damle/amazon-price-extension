@@ -1,39 +1,9 @@
 const url = 'http://localhost:8000/products';
 const signupUrl = 'http://localhost:8000/user/signup';
 const loginUrl = 'http://localhost:8000/user/login';
-// const rawData = {
-//     fruits: [
-//         {
-//             name: "Banana",
-//             color: "Yellow"
-//         },
-//         {
-//             name: "Apple",
-//             color: "Red"
-//         },
-//         {
-//             name: "Watermelon",
-//             color: "Green"
-//         }
-//     ],
-//     vegetables: []
-// }
 
 chrome.runtime.onInstalled.addListener(() => {
     console.log("Installed Extension!");
-    // sendData()
-    // $.ajax({
-    //     url: url,
-    //     data: JSON.stringify(rawData),
-    //     type: 'POST',
-    //     cache: 'no-cache',
-    //     success: (response) => {
-    //         console.log(('response: ', response))
-    //     },
-    //     error: (response) => {
-    //         console.log('error: ', response)
-    //     },
-    // })
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if(request.destination === 'login') {
@@ -52,9 +22,27 @@ chrome.runtime.onInstalled.addListener(() => {
                 },
                 error: function(response) {
                     console.log('error: ', response)
-                    sendResponse({status: "error", response: response});
+                    if(response.statusCode == 500) {
+                        sendResponse({
+                            status: 'Invalid Token',
+                            action: 'Relogin'
+                        })
+                    } else if(response.statusCode == 401) {
+                        sendResponse({
+                            status: 'Auth Error',
+                            action: 'Relogin'
+                        })
+                    } else if(response.status == 400) {
+                        sendResponse({
+                            status: 'Invalid Credentials',
+                            action: 'Reenter Credentials'
+                        })
+                    } else {
+                        sendResponse({status: "error", response: response});
+                    }
                 },
             })
+            return true;
         } else if(request.destination === 'signup') {
             console.log(request.email + " " + request.username + " " + request.password);
             $.ajax({
@@ -63,11 +51,38 @@ chrome.runtime.onInstalled.addListener(() => {
                 type: 'POST',
                 success: function(response) {
                     console.log(('response: ', response))
+                    chrome.storage.local.set({
+                        token: response.token
+                    })
+                    sendResponse({status: "success"})
                 },
                 error: function(response) {
                     console.log('error: ', response)
+                    if(response.statusCode === 500) {
+                        sendResponse({
+                            status: 'Database Error',
+                            action: 'Retry'
+                        })
+                    } else if(response.status === 400) {
+                        if(response.message === "User Already Exists") {
+                            sendResponse({
+                                status: 'Duplicate User',
+                                action: 'Redirect Login'
+                            }) 
+                        } else {
+                            sendResponse({
+                                status: 'Invalid Credentials',
+                                errors: response.responseJSON.errors,
+                                action: 'Reenter Creds'
+                            })  
+                        }
+                    } else {
+                        sendResponse({status: "error", response: response});
+                    }
                 },
             })
         }
+        // sendResponse({test: 'testing sendResponse'})
+        return true;
     })
 })

@@ -22,7 +22,6 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     $scope.email = "";
     $scope.password = "";
     $scope.email = "example@example.com";
-    $scope.username = "username111";
     $scope.password = "12345678";
     $scope.login = function() {
         console.log($scope.email, $scope.password);
@@ -31,18 +30,25 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
             email : $scope.email,
             password : $scope.password
         }
-        chrome.runtime.sendMessage(creds)
-        $scope.email = "";
-        $scope.password = "";
+        chrome.runtime.sendMessage(creds, function(response) {
+            console.log(response);
+            if(response.status === 'success') {
+                $scope.email = "";
+                $scope.password = "";
+                window.location.href = "#!/home"
+            }
+        })
     }
 })
 .controller('SignupController', function($scope) {
     $scope.email = "example@example.com";
     $scope.username = "username111";
     $scope.password = "12345678";
+    $scope.message = ""
     
     $scope.signup = () => {
         console.log($scope.username, $scope.email, $scope.password);
+        $scope.message = "";
         const creds = {
             destination: 'signup',
             email: $scope.email,
@@ -50,9 +56,33 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
             password : $scope.password
         }
         
-        chrome.runtime.sendMessage(creds)
-        $scope.email = "";
-        $scope.username = "";
-        $scope.password = "";
+        chrome.runtime.sendMessage(creds, function(response) {
+            console.log(response);
+            if(response.status === 'success') {
+                $scope.email = "";
+                $scope.username = "";
+                $scope.password = "";
+                window.location.href = "#!/home"
+            } else if(response.action === 'Retry') {
+                $scope.message = ('Encountered an error. Please try again later')
+            } else if(response.action === 'Redirect Login') {
+                $scope.message = ('This email is already registered with a user')
+            } else if(response.errors) {
+                $scope.message = 'Please enter valid credentials\n';
+            } else {
+                $scope.message = ('Please try again')
+            }
+        })
+    }
+})
+.controller('HomeController', function($scope) {
+    $scope.fetching = false;
+    $scope.itemList = [];
+    $scope.showTracked = function() {
+        chrome.runtime.sendMessage({
+            destination: 'Show Tracked'
+        }, function(response) {
+            $scope.itemList = response.itemList;
+        })
     }
 })
