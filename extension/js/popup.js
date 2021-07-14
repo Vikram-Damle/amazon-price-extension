@@ -84,5 +84,17 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
         }, function(response) {
             $scope.itemList = response.itemList;
         })
+    };
+    
+    $scope.trackItem = () => {
+        chrome.runtime.sendMessage({
+            destination: 'track current'
+        }, (response) => {
+            if(response.status === 'success') {
+                $scope.message = "Success"
+            } else {
+                $scope.message = "Encountered error \n Please try again later"
+            }
+        })
     }
 })

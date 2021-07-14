@@ -5,7 +5,8 @@
     "manifest_version": 2,
     "permissions": [
         "declarativeContent",
-        "storage"
+        "storage",
+        "tabs"
     ],
     "content_security_policy":"script-src 'self' https://cdnjs.cloudflare.com; object-src 'self'",
     "background": {
@@ -14,5 +15,11 @@
     },
     "browser_action": {
         "default_popup": "./html/popup.html"
-    }
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://www.amazon.in/*/dp/*", "*://www.amazon.in/dp/*"],
+            "js": ["./js/scrape.js"]
+        }
+    ]
 }

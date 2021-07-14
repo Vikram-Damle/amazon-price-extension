@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ItemSchema = require('./Item');
 
 const UserSchema = mongoose.Schema({
     username: {
@@ -13,10 +14,16 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    itemList: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Item',
+        required: true,
+        default: []
+    },
     createdAt: {
         type: Date,
         default: Date.now(),
     }
 })
 
-module.exports = mongoose.model("user", UserSchema);
+module.exports = UserSchema;
