@@ -19,15 +19,39 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     }
 ])
 .controller('LoginController', function($scope) {
-    $scope.username = "";
+    $scope.email = "";
     $scope.password = "";
+    $scope.email = "example@example.com";
+    $scope.username = "username111";
+    $scope.password = "12345678";
     $scope.login = function() {
-        console.log($scope.username, $scope.password);
+        console.log($scope.email, $scope.password);
         const creds = {
-            username : $scope.username,
+            destination: 'login',
+            email : $scope.email,
             password : $scope.password
         }
         chrome.runtime.sendMessage(creds)
+        $scope.email = "";
+        $scope.password = "";
+    }
+})
+.controller('SignupController', function($scope) {
+    $scope.email = "example@example.com";
+    $scope.username = "username111";
+    $scope.password = "12345678";
+    
+    $scope.signup = () => {
+        console.log($scope.username, $scope.email, $scope.password);
+        const creds = {
+            destination: 'signup',
+            email: $scope.email,
+            username: $scope.username,
+            password : $scope.password
+        }
+        
+        chrome.runtime.sendMessage(creds)
+        $scope.email = "";
         $scope.username = "";
         $scope.password = "";
     }

@@ -2,6 +2,8 @@
     Sign Up Page
     <div id="signup-form-wrapper" ng-controller="SignupController">
         
+        <label for="email">Email: </label>
+        <input id="email" type="text" ng-model="email"> 
         <label for="username">Username: </label>
         <input id="username" type="text" ng-model="username"> 
         <label for="password">Password: </label>
@@ -10,7 +12,7 @@
         <input type="button" value="Sign Up" ng-click="signup()">
         
         <div>
-            <a href="#!/signup"> Sign Up</a>
+            <a href="#!/login"> Login</a>
         </div>
     </div>
 </div>
