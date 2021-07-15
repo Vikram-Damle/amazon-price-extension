@@ -24,14 +24,12 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     $scope.email = "example@example.com";
     $scope.password = "12345678";
     $scope.login = function() {
-        console.log($scope.email, $scope.password);
         const creds = {
             destination: 'login',
             email : $scope.email,
             password : $scope.password
         }
         chrome.runtime.sendMessage(creds, function(response) {
-            console.log(response);
             if(response.status === 'success') {
                 $scope.email = "";
                 $scope.password = "";
@@ -47,7 +45,6 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     $scope.message = ""
     
     $scope.signup = () => {
-        console.log($scope.username, $scope.email, $scope.password);
         $scope.message = "";
         const creds = {
             destination: 'signup',
@@ -57,7 +54,6 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
         }
         
         chrome.runtime.sendMessage(creds, function(response) {
-            console.log(response);
             if(response.status === 'success') {
                 $scope.email = "";
                 $scope.username = "";
@@ -78,6 +74,7 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
 .controller('HomeController', function($scope) {
     $scope.fetching = false;
     $scope.itemList = [];
+    $scope.message = "";
     $scope.showTracked = function() {
         chrome.runtime.sendMessage({
             destination: 'Show Tracked'
@@ -91,7 +88,8 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
             destination: 'track current'
         }, (response) => {
             if(response.status === 'success') {
-                $scope.message = "Success"
+                console.log("Successfully Added Item");
+                $scope.message = "Successfully Added Item"
             } else {
                 $scope.message = "Encountered error \n Please try again later"
             }

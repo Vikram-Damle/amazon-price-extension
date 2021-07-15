@@ -4,8 +4,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 
-const { User } = require("../model/schema");
+const { User, Item } = require("../model/schema");
 const auth = require('../middleware/auth');
+const config = require("../config");
 
 /**
  * @method - POST
@@ -68,7 +69,7 @@ router.post(
 
             jwt.sign(
                 payload,
-                "randomString", {
+                config.randomString, {
                     expiresIn: 10000
                 },
                 (err, token) => {
@@ -85,6 +86,11 @@ router.post(
     }
 );
 
+/**
+ * @method - POST
+ * @param - /login
+ * @description - User Login
+ */
 
 router.post(
     "/login",
@@ -127,7 +133,7 @@ router.post(
   
         jwt.sign(
           payload,
-          "secret",
+          config.randomString,
           {
             expiresIn: 3600
           },
@@ -147,6 +153,51 @@ router.post(
     }
   );
   
+
+/**
+ * @method - POST
+ * @param - /track
+ * @description - Track New Item
+ */
+
+router.post('/track', auth, async (request, response) => {
+
+  const { name, identifier, url, price } = request.body;
+  
+  try{
+    const oldItem = await Item.findOne({
+      identifier: identifier
+    });
+
+    if(!oldItem) {
+      newItem = new Item({
+        name, identifier, url, price
+      });
+
+      newItem.save();
+    }
+
+    const user = await User.findByIdAndUpdate(request.user.id, {
+      $addToSet: {
+        "itemList" : identifier
+      }
+    });
+
+    if(!user) {
+      throw new Error('User not found');
+    }
+
+    response.status(200).json({
+      message: "Item Added Successfully"
+    });
+    
+  } catch (e) {
+    console.error(e);
+    response.status(500).json({
+      message: "Server Error"
+    });
+  }
+})
 
 /**
  * @method - POST

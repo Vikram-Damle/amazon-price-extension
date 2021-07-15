@@ -1,9 +1,19 @@
 const mongoose = require('mongoose')
 
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
 const ItemSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
+    },
+    identifier: {
+        type: String,
+        required: true,
+        index: true,
+        unique: true
     },
     url: {
         type: String,

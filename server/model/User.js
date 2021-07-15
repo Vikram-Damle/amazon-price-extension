@@ -15,8 +15,7 @@ const UserSchema = mongoose.Schema({
         required: true
     },
     itemList: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Item',
+        type: [String],
         required: true,
         default: []
     },

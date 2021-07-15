@@ -1,4 +1,3 @@
-const url = 'http://localhost:8000/products';
 const signupUrl = 'http://localhost:8000/user/signup';
 const loginUrl = 'http://localhost:8000/user/login';
 const trackUrl = 'http://localhost:8000/user/track'
@@ -8,12 +7,10 @@ chrome.runtime.onInstalled.addListener(() => {
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if(request.destination === 'login') {
-            console.log(request.email + " " + request.password);
             handleLogin(request, sendResponse);
 
             return true;
         } else if(request.destination === 'signup') {
-            console.log(request.email + " " + request.username + " " + request.password);
             handleSignup(request, sendResponse)
 
             return true;
@@ -34,14 +31,12 @@ const handleSignup = (request, sendResponse) => {
         data: request,
         type: 'POST',
         success: function(response) {
-            console.log(('response: ', response))
             chrome.storage.local.set({
                 token: response.token
             })
             sendResponse({status: "success"})
         },
         error: function(response) {
-            console.log('error: ', response)
             if(response.statusCode === 500) {
                 sendResponse({
                     status: 'Database Error',
@@ -73,7 +68,6 @@ const handleLogin = (request, sendResponse) => {
         data: request,
         type: 'POST',
         success: function(response) {
-            console.log(('response: ', response));
             chrome.storage.local.set({
                 token: response.token
             })
@@ -81,7 +75,6 @@ const handleLogin = (request, sendResponse) => {
             
         },
         error: function(response) {
-            console.log('error: ', response)
             if(response.statusCode == 500) {
                 sendResponse({
                     status: 'Invalid Token',
@@ -111,26 +104,32 @@ const handleTrackCurrent = (request, sendResponse, token) => {
     }, (tabs) => {
         const tab = tabs[0];
         const tabUrl = new URL(tab.url);
-        console.log(tabUrl);
         if(tabUrl.hostname === 'www.amazon.in') {
             const path = tabUrl.pathname.split('/');
             if(path.includes('dp')) {
                 chrome.tabs.sendMessage(tab.id, {
                     destination: 'track current'
                 }, (response) => {
-                    const {name, url, price} = response;
+                    if(response.status !== 'success') {
+                        sendResponse({status: 'error'});
+                        return true;
+                    }
+                    console.log(response);
+                    const {name, identifier, url, price} = response;
                     $.ajax({
                         url: trackUrl,
-                        data: {name, url, price},
+                        data: {name, identifier, url, price},
                         type: 'POST',
                         headers: {token},
                         success: (response) => {
-                            console.log(('tracking success: ', response))
-                            // sendResponse({status: "success"})
+                            window.alert("Successfully Added Item")
+                            sendResponse({status: "success"})
+                            return true;
                         },
                         error: (response) => {
-                            console.log(('tracking error: ', response))
-                            // sendResponse({status: "error"})
+                            console.error(('tracking error: ', response))
+                            sendResponse({status: "error"})
+                            return true;
                             
                         }
                     });
@@ -140,8 +139,6 @@ const handleTrackCurrent = (request, sendResponse, token) => {
             }
         }
 
-        console.log('Wrong URL');
-        
         sendResponse({
             status: 'Wrong url',
             action: 'Change Page'

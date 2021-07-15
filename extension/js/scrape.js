@@ -1,19 +1,25 @@
-window.alert("Testing Scraper");
+console.log("Testing Scraper");
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log(request);
     if(request.destination === 'track current') {
-        const href = new URL(window.location.href);
-        
-        
-        sendResponse({
-            name: 'testName',
-            url: 'testUrl',
-            price: 109
-        })
-        return true;
+        try{
+            const name = document.querySelector('span[id=productTitle]').innerHTML.replace(/[\r\n]+/gm, '');
+            const price = document.querySelector('span[id^=priceblock_]').innerHTML;
+    
+    
+            const href = new URL(window.location.href);
+            const [identifier] = href.pathname.split('/').filter((val) => val.length === 10).slice(-1)
+    
+            const url = href.hostname + href.pathname;
+            console.log(url);
+    
+            sendResponse({name, identifier, url, price, status: 'success'})
+            return true;
 
+        } catch (e){
+            console.error(e);
+            sendResponse({status: 'Scrape Unsuccessful'});
+        }
     }
-
     return true;
 })
