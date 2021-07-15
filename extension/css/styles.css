@@ -24,6 +24,15 @@ input[type=text], input[type=password] {
     border-radius: 5px;
 }
 
+.errors {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #c55151;
+    margin: 10px;
+}
+
 /* Home  */
 #home-wrapper {
     font-size: 1rem;
@@ -44,6 +53,7 @@ input[type=text], input[type=password] {
     padding: 10px;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 #login-form-wrapper label{
@@ -76,21 +86,35 @@ input[type=text], input[type=password] {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
+}
+
+#signupHeader {
+    font: 1.5rem bold;
+
 }
 
 #signup-form-wrapper {
     padding: 10px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+
 }
 
 #signup-form-wrapper label{
     height: auto;
+    display: flex;
+    justify-content: center;
+    font-size: 0.9rem;
+
 }
 
-#signup-form-wrapper input{
+#signup-form-wrapper input[type=text], #signup-form-wrapper input[type=password]{
     margin: 0 0 10px;
-    width: 200px;
+    width: 230px;
+    font-size: 1.1rem;
+    text-align: center;
 }
 
 /* Home */

@@ -1,5 +1,3 @@
-console.log("Testing Scraper");
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if(request.destination === 'track current') {
         try{
@@ -11,7 +9,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             const [identifier] = href.pathname.split('/').filter((val) => val.length === 10).slice(-1)
     
             const url = href.hostname + href.pathname;
-            console.log(url);
     
             sendResponse({name, identifier, url, price, status: 'success'})
             return true;

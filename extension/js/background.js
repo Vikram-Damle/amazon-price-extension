@@ -2,6 +2,7 @@ const signupUrl = 'http://localhost:8000/user/signup';
 const loginUrl  = 'http://localhost:8000/user/login';
 const trackUrl  = 'http://localhost:8000/user/track';
 const fetchUrl  = 'http://localhost:8000/user/fetch';
+const startUrl  = 'http://localhost:8000/user/me';
 
 chrome.runtime.onInstalled.addListener(() => {
     console.log("Installed Extension!");
@@ -25,6 +26,20 @@ chrome.runtime.onInstalled.addListener(() => {
             chrome.storage.local.get('token', (result) => {
                 handleShowTracked(request, sendResponse, result.token);
             })
+        } else if(request.destination === 'open popup') {
+            chrome.storage.local.get('token', (result) => {
+                if(result.token) {
+                    handlePopupOpen(sendResponse, result.token);
+                    return true;
+                } else {
+                    sendResponse({ status: 'no token'})
+                    return true;
+                }
+            })
+        } else if(request.destination === 'logout') {
+            chrome.storage.local.remove('token', () => {
+                sendResponse({ status: 'success'});
+            });
         }
         return true;
     })
@@ -119,7 +134,6 @@ const handleTrackCurrent = (request, sendResponse, token) => {
                         sendResponse({status: 'error'});
                         return true;
                     }
-                    console.log(response);
                     const {name, identifier, url, price} = response;
                     $.ajax({
                         url: trackUrl,
@@ -158,7 +172,6 @@ const handleShowTracked = (request, sendResponse, token) => {
         type: 'GET',
         headers: {token},
         success: (response) => {
-            console.log("Successfully Received Item List");
             sendResponse({
                 status: "success",
                 itemList : response.itemList
@@ -172,4 +185,18 @@ const handleShowTracked = (request, sendResponse, token) => {
             
         }
     });
+};
+
+const handlePopupOpen = (sendResponse, token) => {
+    $.ajax({
+        url: startUrl,
+        type: 'GET',
+        headers : { token },
+        success: (response) => {
+            sendResponse({ status: 'logged in' });
+        }, 
+        error: (response) => {
+            sendResponse({ status: 'token expired'})
+        }
+    })
 }

@@ -33,7 +33,6 @@ router.post(
                 errors: errors.array()
             });
         }
-        console.log(req.body)
 
         const {
             username,
@@ -80,7 +79,7 @@ router.post(
                 }
             );
         } catch (err) {
-            console.log(err.message);
+            console.error(err.message);
             res.status(500).send("Error in Saving");
         }
     }
@@ -207,7 +206,6 @@ router.post('/track', auth, async (request, response) => {
 
 router.get('/fetch', auth, async (request, response) => {
   const id = request.user.id;
-  console.log("Fetching List");
 
 
   try {

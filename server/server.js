@@ -31,17 +31,3 @@ app.get('/', (req, res) => {
 })
 
 app.use('/user', cors(), user);
-
-app.post('/products', cors(), (request, response) => {
-    console.log(request.method, request.url)
-    let body = []
-    request.on('data', (chunk) => {
-        body.push(chunk)
-    }).on('end', () => {
-        body = Buffer.concat(body).toString()
-        // console.log(body)
-        console.log(JSON.parse(body))
-    })
-    
-    response.end('Hello post request at /products\n')
-})

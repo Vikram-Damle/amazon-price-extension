@@ -1,3 +1,13 @@
+chrome.runtime.sendMessage({
+    destination: 'open popup'
+}, (response) => {
+    if(response.status === 'logged in') {
+        window.location.href = '#!/home'
+    } else {
+        window.location.href = '#!/login'
+    }
+})
+
 const amazonextension = angular.module('amazonextension', ['ui.router'])
 .config([
     '$stateProvider',
@@ -80,6 +90,7 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     $scope.fetching = false;
     $scope.itemList = [];
     $scope.message = "";
+
     $scope.showTracked = () => {
         chrome.runtime.sendMessage({
             destination: 'show tracked'
@@ -111,6 +122,14 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
             }
 
             $scope.$apply();
+        })
+    };
+
+    $scope.logout = () => {
+        chrome.runtime.sendMessage({
+            destination: 'logout'
+        }, () => {
+            window.location.href = '#!/login'
         })
     }
 })
