@@ -28,8 +28,8 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     }
 ])
 .controller('LoginController', function($scope) {
-    $scope.email = 'example@example.com';
-    $scope.password = '12345678';
+    $scope.email = '';
+    $scope.password = '';
     $scope.message = '';
 
     $scope.login = function() {
@@ -52,9 +52,9 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     }
 })
 .controller('SignupController', function($scope) {
-    $scope.email = "example@example.com";
-    $scope.username = "username111";
-    $scope.password = "12345678";
+    $scope.email = "";
+    $scope.username = "";
+    $scope.password = "";
     $scope.message = ""
     
     $scope.signup = () => {
