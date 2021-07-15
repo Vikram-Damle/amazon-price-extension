@@ -1,6 +1,7 @@
 const signupUrl = 'http://localhost:8000/user/signup';
-const loginUrl = 'http://localhost:8000/user/login';
-const trackUrl = 'http://localhost:8000/user/track'
+const loginUrl  = 'http://localhost:8000/user/login';
+const trackUrl  = 'http://localhost:8000/user/track';
+const fetchUrl  = 'http://localhost:8000/user/fetch';
 
 chrome.runtime.onInstalled.addListener(() => {
     console.log("Installed Extension!");
@@ -20,6 +21,10 @@ chrome.runtime.onInstalled.addListener(() => {
             })
 
             return true;
+        } else if(request.destination === 'show tracked') {
+            chrome.storage.local.get('token', (result) => {
+                handleShowTracked(request, sendResponse, result.token);
+            })
         }
         return true;
     })
@@ -122,7 +127,6 @@ const handleTrackCurrent = (request, sendResponse, token) => {
                         type: 'POST',
                         headers: {token},
                         success: (response) => {
-                            window.alert("Successfully Added Item")
                             sendResponse({status: "success"})
                             return true;
                         },
@@ -146,4 +150,26 @@ const handleTrackCurrent = (request, sendResponse, token) => {
         return true;
     });
     return true;
+}
+
+const handleShowTracked = (request, sendResponse, token) => {
+    $.ajax({
+        url: fetchUrl,
+        type: 'GET',
+        headers: {token},
+        success: (response) => {
+            console.log("Successfully Received Item List");
+            sendResponse({
+                status: "success",
+                itemList : response.itemList
+            });
+            return true;
+        },
+        error: (response) => {
+            console.error(('fetching error: ', response.responseText))
+            sendResponse({status: "error"})
+            return true;
+            
+        }
+    });
 }

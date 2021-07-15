@@ -6,7 +6,6 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
         $stateProvider.state('home', {
             url: '/home',
             templateUrl: '../html/home.html',
-            // controller: 'MainCtrl'
         }).state('login', {
             url: '/login',
             templateUrl: '../html/login.html'
@@ -19,10 +18,10 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
     }
 ])
 .controller('LoginController', function($scope) {
-    $scope.email = "";
-    $scope.password = "";
-    $scope.email = "example@example.com";
-    $scope.password = "12345678";
+    $scope.email = 'example@example.com';
+    $scope.password = '12345678';
+    $scope.message = '';
+
     $scope.login = function() {
         const creds = {
             destination: 'login',
@@ -31,10 +30,14 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
         }
         chrome.runtime.sendMessage(creds, function(response) {
             if(response.status === 'success') {
-                $scope.email = "";
-                $scope.password = "";
-                window.location.href = "#!/home"
+                $scope.email = '';
+                $scope.password = '';
+                window.location.href = '#!/home'
+            } else {
+                $scope.message = 'Error: Could not log in\nPlease check your credentials'
             }
+
+            $scope.$apply();
         })
     }
 })
@@ -68,31 +71,46 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
             } else {
                 $scope.message = ('Please try again')
             }
+
+            $scope.$apply();
         })
     }
 })
-.controller('HomeController', function($scope) {
+.controller('HomeController', ($scope) => {
     $scope.fetching = false;
     $scope.itemList = [];
     $scope.message = "";
-    $scope.showTracked = function() {
+    $scope.showTracked = () => {
         chrome.runtime.sendMessage({
-            destination: 'Show Tracked'
-        }, function(response) {
-            $scope.itemList = response.itemList;
-        })
+            destination: 'show tracked'
+        }, (response) => {
+            if(response.status === 'success') {
+                $scope.itemList = response.itemList;
+                $scope.message = '';
+            } else {
+                $scope.message = 'Encountered an error. \n Please try again later';
+            };
+
+            $scope.$apply();
+        });
     };
     
     $scope.trackItem = () => {
+        $scope.itemList = [];
         chrome.runtime.sendMessage({
             destination: 'track current'
         }, (response) => {
             if(response.status === 'success') {
-                console.log("Successfully Added Item");
-                $scope.message = "Successfully Added Item"
+                $scope.message = 'Successfully Added Item'
             } else {
-                $scope.message = "Encountered error \n Please try again later"
+                if(response.action === 'Change Page') {
+                    $scope.message = "This doesn't seem to be a valid item page"
+                } else {
+                    $scope.message = 'Encountered an error \n Please try again later'
+                }
             }
+
+            $scope.$apply();
         })
     }
 })

@@ -200,7 +200,48 @@ router.post('/track', auth, async (request, response) => {
 })
 
 /**
- * @method - POST
+ * @method - GET
+ * @description - Fetch User Item List
+ * @param - /user/fetch
+ */
+
+router.get('/fetch', auth, async (request, response) => {
+  const id = request.user.id;
+  console.log("Fetching List");
+
+
+  try {
+    const user = await User.findById(id);
+
+    if(!user) {
+      throw new Error('User Not Found');
+    }
+
+    const itemList = await Promise.all(user.itemList.map(async (curr) => {
+      try{
+        const item = await Item.findOne({identifier: curr});
+        return item;
+      } catch (e){
+        throw e;
+      }
+    }));
+
+
+    response.status(200).json({
+      status: 'success',
+      itemList: itemList
+    })
+
+  } catch (e) {
+    console.error(e);
+    response.status(500).json({
+      message: 'Server Error'
+    });
+  }
+})
+
+/**
+ * @method - GET
  * @description - Get LoggedIn User
  * @param - /user/me
  */
