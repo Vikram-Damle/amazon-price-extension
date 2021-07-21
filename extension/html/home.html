@@ -9,7 +9,7 @@
     <ul id="homeItemList">
         <li class="item" ng-repeat="item in itemList">
             <div class="itemWrapper">
-                <div class="itemName"><a href="{{item.url}}">{{item.name}}</a></div>
+                <div class="itemName"><a href="#" ng-click="openItemLink(item.url)">{{item.name}}</a></div>
                 <div class="itemPrice">{{item.price}}</div>
             </div>
         </li>

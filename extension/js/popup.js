@@ -125,6 +125,12 @@ const amazonextension = angular.module('amazonextension', ['ui.router'])
         })
     };
 
+    $scope.openItemLink = (url) => {
+        chrome.tabs.create({
+            url: 'https://' + url
+        })
+    }
+
     $scope.logout = () => {
         chrome.runtime.sendMessage({
             destination: 'logout'
